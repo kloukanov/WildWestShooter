@@ -26,6 +26,12 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	FVector2D LookAxisVector;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AGun> GunClass;
+
+	UPROPERTY()
+	class AGun* Gun;
+
 public:
 
 	AWildWestShooterPlayer();
