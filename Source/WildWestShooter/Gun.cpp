@@ -1,5 +1,5 @@
 #include "Gun.h"
-
+#include "DrawDebugHelpers.h"
 
 
 AGun::AGun()
@@ -25,3 +25,13 @@ void AGun::Tick(float DeltaTime)
 
 }
 
+void AGun::PullTrigger() {
+	UE_LOG(LogTemp, Warning, TEXT("pulled trigger"));
+
+	if(Mesh){
+		FTransform MuzzleTransform = Mesh->GetSocketTransform(TEXT("MuzzleFlash"));
+		FVector MuzzleLocation = MuzzleTransform.GetLocation();
+		DrawDebugSphere(GetWorld(), MuzzleLocation, 5.f, 8, FColor::Red, true, 5.f);
+	}
+	
+}

@@ -20,6 +20,8 @@ private:
 public:	
 	AGun();
 
+	void PullTrigger();
+
 protected:
 	virtual void BeginPlay() override;
 

@@ -24,6 +24,9 @@ private:
 	class UInputAction* MoveArmAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* ShootAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	FVector2D LookAxisVector;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -44,6 +47,8 @@ protected:
 	virtual void BeginPlay() override;
 
 	void MoveArm(const struct FInputActionValue& Value);
+
+	void Shoot();
 
 public:	
 

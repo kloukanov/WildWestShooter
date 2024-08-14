@@ -54,6 +54,7 @@ void AWildWestShooterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
 		EnhancedInputComponent->BindAction(MoveArmAction, ETriggerEvent::Triggered, this, &AWildWestShooterPlayer::MoveArm);
+		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &AWildWestShooterPlayer::Shoot);
 	}
 }
 
@@ -63,4 +64,10 @@ void AWildWestShooterPlayer::MoveArm(const FInputActionValue& Value) {
 
 FVector2D AWildWestShooterPlayer::GetLookAxisVector() {
 	return LookAxisVector;
+}
+
+void AWildWestShooterPlayer::Shoot() {
+	if(Gun){
+		Gun->PullTrigger();
+	}
 }
