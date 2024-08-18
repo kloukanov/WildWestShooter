@@ -27,6 +27,9 @@ private:
 	class UInputAction* ShootAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* PickUpGunAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	FVector2D LookAxisVector;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -34,6 +37,12 @@ private:
 
 	UPROPERTY()
 	class AGun* Gun;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Gun, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* GunHolderComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Gun, meta = (AllowPrivateAccess = "true"))
+	float GunPickUpRange;
 
 public:
 
@@ -49,6 +58,8 @@ protected:
 	void MoveArm(const struct FInputActionValue& Value);
 
 	void Shoot();
+
+	void PickUpGun();
 
 public:	
 

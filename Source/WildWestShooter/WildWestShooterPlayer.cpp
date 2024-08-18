@@ -25,15 +25,14 @@ AWildWestShooterPlayer::AWildWestShooterPlayer()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	GunHolderComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GunHolderComponent"));
+	GunHolderComponent->SetupAttachment(GetMesh(), TEXT("gun_holder"));
 }
 
 void AWildWestShooterPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	Gun = GetWorld()->SpawnActor<AGun>(GunClass);
-	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("hand_rWeapon"));
-	Gun->SetOwner(this);
 }
 
 void AWildWestShooterPlayer::Tick(float DeltaTime)
@@ -55,6 +54,7 @@ void AWildWestShooterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
 		EnhancedInputComponent->BindAction(MoveArmAction, ETriggerEvent::Triggered, this, &AWildWestShooterPlayer::MoveArm);
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &AWildWestShooterPlayer::Shoot);
+		EnhancedInputComponent->BindAction(PickUpGunAction, ETriggerEvent::Triggered, this, &AWildWestShooterPlayer::PickUpGun);
 	}
 }
 
@@ -69,5 +69,22 @@ FVector2D AWildWestShooterPlayer::GetLookAxisVector() {
 void AWildWestShooterPlayer::Shoot() {
 	if(Gun){
 		Gun->PullTrigger();
+	}
+}
+
+void AWildWestShooterPlayer::PickUpGun() {
+	if(Gun){
+		// we already have a gun
+		return;
+	}
+
+	FVector GunHolderLocation = GunHolderComponent->GetComponentLocation();
+	FVector HandLocation = GetMesh()->GetSocketLocation(TEXT("hand_rWeapon"));
+
+	if(GunHolderLocation.Distance(HandLocation, GunHolderLocation) <= GunPickUpRange) {
+		GunHolderComponent->SetHiddenInGame(true);
+		Gun = GetWorld()->SpawnActor<AGun>(GunClass);
+		Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("hand_rWeapon"));
+		Gun->SetOwner(this);
 	}
 }
