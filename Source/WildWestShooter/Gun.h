@@ -17,6 +17,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* Mesh;
 
+	UPROPERTY(EditAnywhere, Category = "Gun Properties", meta = (AllowPrivateAccess = "true"))
+	float FireRange;
+
 public:	
 	AGun();
 
@@ -24,6 +27,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	bool GunTrace(FHitResult& OutHit, FVector& OutShotDirection);
 
 public:	
 	virtual void Tick(float DeltaTime) override;
