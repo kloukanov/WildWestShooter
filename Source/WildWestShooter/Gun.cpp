@@ -1,5 +1,6 @@
 #include "Gun.h"
 #include "DrawDebugHelpers.h"
+#include "WildWestShooterPlayer.h"
 
 
 AGun::AGun()
@@ -35,10 +36,15 @@ void AGun::PullTrigger() {
 	bool bSuccess = GunTrace(Hit, ShotDirection);
 
 	if(bSuccess){
-		DrawDebugPoint(GetWorld(), Hit.Location, 20, FColor::Blue, true);
+		// DrawDebugPoint(GetWorld(), Hit.Location, 20, FColor::Blue, true);
 		AActor* HitActor = Hit.GetActor();
 		if(HitActor){
 			UE_LOG(LogTemp, Warning, TEXT("hit actor with name: %s"), *HitActor->GetActorNameOrLabel());
+			AWildWestShooterPlayer* HitPlayer = Cast<AWildWestShooterPlayer>(HitActor);
+			if(HitPlayer){
+				HitPlayer->GetMesh()->SetSimulatePhysics(true);
+				HitPlayer->GetMesh()->AddImpulseAtLocation(FVector(1000, 1000, 1000), Hit.Location);
+			}
 		}
 	}
 }
@@ -50,7 +56,7 @@ bool AGun::GunTrace(FHitResult& OutHit, FVector& OutShotDirection) {
 		FVector EndShotLocation = MuzzleLocation + MuzzleTransform.GetRotation().Vector() * FireRange;
 		OutShotDirection = -MuzzleTransform.GetRotation().Vector(); // not sure why negative
 
-		DrawDebugSphere(GetWorld(), MuzzleLocation, 5.f, 8, FColor::Red, true, 5.f);
+		// DrawDebugSphere(GetWorld(), MuzzleLocation, 5.f, 8, FColor::Red, true, 5.f);
 		DrawDebugLine(GetWorld(), MuzzleLocation, EndShotLocation, FColor::Green, true, 5.f);
 
 		// ignore the gun and the owner of the gun
