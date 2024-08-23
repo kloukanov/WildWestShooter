@@ -36,14 +36,16 @@ void AGun::PullTrigger() {
 	bool bSuccess = GunTrace(Hit, ShotDirection);
 
 	if(bSuccess){
-		// DrawDebugPoint(GetWorld(), Hit.Location, 20, FColor::Blue, true);
+		DrawDebugPoint(GetWorld(), Hit.Location, 5, FColor::Blue, true);
 		AActor* HitActor = Hit.GetActor();
+		
 		if(HitActor){
 			UE_LOG(LogTemp, Warning, TEXT("hit actor with name: %s"), *HitActor->GetActorNameOrLabel());
 			AWildWestShooterPlayer* HitPlayer = Cast<AWildWestShooterPlayer>(HitActor);
 			if(HitPlayer){
+				UE_LOG(LogTemp, Warning, TEXT("hit bone with name: %s"), *Hit.BoneName.ToString());
 				HitPlayer->GetMesh()->SetSimulatePhysics(true);
-				HitPlayer->GetMesh()->AddImpulseAtLocation(FVector(1000, 1000, 1000), Hit.Location);
+				HitPlayer->GetMesh()->AddImpulseAtLocation(ShotDirection * 5000, Hit.Location, Hit.BoneName);
 			}
 		}
 	}
@@ -54,7 +56,7 @@ bool AGun::GunTrace(FHitResult& OutHit, FVector& OutShotDirection) {
 		FTransform MuzzleTransform = Mesh->GetSocketTransform(TEXT("MuzzleFlash"));
 		FVector MuzzleLocation = MuzzleTransform.GetLocation();
 		FVector EndShotLocation = MuzzleLocation + MuzzleTransform.GetRotation().Vector() * FireRange;
-		OutShotDirection = -MuzzleTransform.GetRotation().Vector(); // not sure why negative
+		OutShotDirection = MuzzleTransform.GetRotation().Vector(); // not sure why negative
 
 		// DrawDebugSphere(GetWorld(), MuzzleLocation, 5.f, 8, FColor::Red, true, 5.f);
 		DrawDebugLine(GetWorld(), MuzzleLocation, EndShotLocation, FColor::Green, true, 5.f);
