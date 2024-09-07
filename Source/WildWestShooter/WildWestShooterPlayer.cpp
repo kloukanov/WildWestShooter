@@ -8,11 +8,11 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Gun.h"
-
+#include "PhysicsEngine/PhysicalAnimationComponent.h"
 
 AWildWestShooterPlayer::AWildWestShooterPlayer()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	// PrimaryActorTick.bCanEverTick = false;
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -24,6 +24,9 @@ AWildWestShooterPlayer::AWildWestShooterPlayer()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+
+	PhysicalAnimComp = CreateDefaultSubobject<UPhysicalAnimationComponent>(TEXT("PhysicalAnimationComponent"));
+	PhysicalAnimComp->SetSkeletalMeshComponent(GetMesh()); 
 
 	GunHolderComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GunHolderComponent"));
 	GunHolderComponent->SetupAttachment(GetMesh(), TEXT("gun_holder"));
@@ -39,6 +42,17 @@ void AWildWestShooterPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// UE_LOG(LogTemp, Warning, TEXT("reaction time: %f"), HitReactionTime);
+
+	HitReactionTime = FMath::FInterpTo(HitReactionTime, 0, 0, 10000) - (DeltaTime * 0.1);
+
+	if(HitReactionTime <= 0){
+		HitReactionTime = 0;
+		GetMesh()->SetAllBodiesBelowSimulatePhysics(FName("pelvis"), false, true);
+		SetActorTickEnabled(false);
+	}else {
+		GetMesh()->SetAllBodiesBelowPhysicsBlendWeight(FName("pelvis"), FMath::Min(HitReactionTime, 1), false, true);
+	}
 }
 
 void AWildWestShooterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -87,4 +101,36 @@ void AWildWestShooterPlayer::PickUpGun() {
 		Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("hand_rWeapon"));
 		Gun->SetOwner(this);
 	}
+}
+
+void AWildWestShooterPlayer::SetIsDead(bool bDead) {
+	IsDead = bDead;
+} 
+
+bool AWildWestShooterPlayer::GetIsDead() const {
+	return IsDead;
+}
+
+void AWildWestShooterPlayer::HandlePlayerGotShot(FVector ShotDirection, FVector Location, FName Bone) {
+
+	if(IsDead){
+		GetMesh()->AddImpulseAtLocation(ShotDirection, Location, Bone);
+		return;
+	}
+
+	// TODO: check health too
+	if(Bone.ToString().Equals("head")){
+		GetMesh()->SetSimulatePhysics(true);
+		GetMesh()->AddImpulseAtLocation(ShotDirection, Location, Bone);
+		SetActorTickEnabled(false);
+		SetIsDead(true);
+		return;
+	}
+
+	SetActorTickEnabled(true);
+	HitReactionTime += 0.2;
+
+	PhysicalAnimComp->ApplyPhysicalAnimationProfileBelow(TEXT("pelvis"), FName("Hit"), false);
+	GetMesh()->SetAllBodiesBelowSimulatePhysics(TEXT("pelvis"), true, false);
+	GetMesh()->AddImpulseAtLocation(ShotDirection, Location, Bone);
 }

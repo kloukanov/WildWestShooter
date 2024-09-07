@@ -44,12 +44,24 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Gun, meta = (AllowPrivateAccess = "true"))
 	float GunPickUpRange;
 
+	class UPhysicalAnimationComponent* PhysicalAnimComp;
+
+	float HitReactionTime = 0;
+
+	bool IsDead = false;
+
 public:
 
 	AWildWestShooterPlayer();
 
 	UFUNCTION(Blueprintcallable)
 	FVector2D GetLookAxisVector();
+
+	void HandlePlayerGotShot(FVector ShotDirection, FVector Location, FName Bone);
+
+	void SetIsDead(bool bDead);
+
+	bool GetIsDead() const;
 
 protected:
 

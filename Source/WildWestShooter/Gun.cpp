@@ -44,8 +44,7 @@ void AGun::PullTrigger() {
 			AWildWestShooterPlayer* HitPlayer = Cast<AWildWestShooterPlayer>(HitActor);
 			if(HitPlayer){
 				UE_LOG(LogTemp, Warning, TEXT("hit bone with name: %s"), *Hit.BoneName.ToString());
-				HitPlayer->GetMesh()->SetSimulatePhysics(true);
-				HitPlayer->GetMesh()->AddImpulseAtLocation(ShotDirection * 5000, Hit.Location, Hit.BoneName);
+				HitPlayer->HandlePlayerGotShot(ShotDirection * 5000, Hit.Location, Hit.BoneName);
 			}
 		}
 	}
