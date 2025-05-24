@@ -67,6 +67,7 @@ void AWildWestShooterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
 		EnhancedInputComponent->BindAction(MoveArmAction, ETriggerEvent::Triggered, this, &AWildWestShooterPlayer::MoveArm);
+		EnhancedInputComponent->BindAction(MoveBodyAction, ETriggerEvent::Triggered, this, &AWildWestShooterPlayer::MoveBody);
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &AWildWestShooterPlayer::Shoot);
 		EnhancedInputComponent->BindAction(PickUpGunAction, ETriggerEvent::Triggered, this, &AWildWestShooterPlayer::PickUpGun);
 	}
@@ -76,8 +77,17 @@ void AWildWestShooterPlayer::MoveArm(const FInputActionValue& Value) {
 	LookAxisVector += Value.Get<FVector2D>();
 }
 
+void AWildWestShooterPlayer::MoveBody(const FInputActionValue& Value) {
+	UE_LOG(LogTemp, Warning, TEXT("movebody: %s"), *Value.ToString());
+	MoveAxisVector += Value.Get<FVector2D>();
+}
+
 FVector2D AWildWestShooterPlayer::GetLookAxisVector() {
 	return LookAxisVector;
+}
+
+FVector2D AWildWestShooterPlayer::GetMoveAxisVector() {
+	return MoveAxisVector;
 }
 
 void AWildWestShooterPlayer::Shoot() {

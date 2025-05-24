@@ -30,6 +30,12 @@ private:
 	class UInputAction* PickUpGunAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* MoveBodyAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	FVector2D MoveAxisVector;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	FVector2D LookAxisVector;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -57,6 +63,9 @@ public:
 	UFUNCTION(Blueprintcallable)
 	FVector2D GetLookAxisVector();
 
+	UFUNCTION(Blueprintcallable)
+	FVector2D GetMoveAxisVector();
+
 	void HandlePlayerGotShot(FVector ShotDirection, FVector Location, FName Bone);
 
 	void SetIsDead(bool bDead);
@@ -68,6 +77,8 @@ protected:
 	virtual void BeginPlay() override;
 
 	void MoveArm(const struct FInputActionValue& Value);
+
+	void MoveBody(const struct FInputActionValue& Value);
 
 	void Shoot();
 
