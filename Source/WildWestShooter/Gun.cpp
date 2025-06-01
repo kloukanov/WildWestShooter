@@ -17,6 +17,7 @@ AGun::AGun()
 void AGun::BeginPlay()
 {
 	Super::BeginPlay();
+	CurrentBullets = MaxBullets;
 	
 }
 
@@ -29,6 +30,13 @@ void AGun::Tick(float DeltaTime)
 void AGun::PullTrigger() {
 	// TODO: muzzle flash particles
 	// TODO: gun sound
+
+	if(CurrentBullets <= 0){
+		// TODO: play blank sound
+		return;
+	}
+
+	CurrentBullets--;
 
 	FHitResult Hit;
 	FVector ShotDirection; 

@@ -20,10 +20,19 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Gun Properties", meta = (AllowPrivateAccess = "true"))
 	float FireRange;
 
+	UPROPERTY(EditAnywhere, Category = "Gun Properties", meta = (AllowPrivateAccess = "true"))
+	int MaxBullets;
+
+	int CurrentBullets;
+
 public:	
 	AGun();
 
 	void PullTrigger();
+
+	int GetMaxBullets() { return MaxBullets; } 
+
+	int GetCurrentBullets() { return CurrentBullets; } 
 
 protected:
 	virtual void BeginPlay() override;
