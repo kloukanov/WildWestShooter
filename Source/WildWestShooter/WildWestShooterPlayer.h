@@ -72,6 +72,10 @@ public:
 
 	bool GetIsDead() const;
 
+	void Shoot();
+	
+	void PickUpGun();
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -79,10 +83,6 @@ protected:
 	void MoveArm(const struct FInputActionValue& Value);
 
 	void MoveBody(const struct FInputActionValue& Value);
-
-	void Shoot();
-
-	void PickUpGun();
 
 public:	
 
