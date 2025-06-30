@@ -74,6 +74,8 @@ void AWildWestShooterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerIn
 }
 
 void AWildWestShooterPlayer::MoveArm(const FInputActionValue& Value) {
+	// UE_LOG(LogTemp, Warning, TEXT("moveArm: %s"), *Value.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("===== LOOK AXIS VECTOR: %s"), *LookAxisVector.ToString());
 	LookAxisVector += Value.Get<FVector2D>();
 }
 
@@ -100,17 +102,23 @@ void AWildWestShooterPlayer::PickUpGun() {
 	if(Gun){
 		// we already have a gun
 		return;
-	}
-
-	FVector GunHolderLocation = GunHolderComponent->GetComponentLocation();
-	FVector HandLocation = GetMesh()->GetSocketLocation(TEXT("hand_rWeapon"));
-
-	if(GunHolderLocation.Distance(HandLocation, GunHolderLocation) <= GunPickUpRange) {
+	}	
+	if(CanGetGun()) {
 		GunHolderComponent->SetHiddenInGame(true);
 		Gun = GetWorld()->SpawnActor<AGun>(GunClass);
 		Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("hand_rWeapon"));
 		Gun->SetOwner(this);
 	}
+}
+
+bool AWildWestShooterPlayer::CanGetGun() {
+	FVector GunHolderLocation = GunHolderComponent->GetComponentLocation();
+	FVector HandLocation = GetMesh()->GetSocketLocation(TEXT("hand_rWeapon"));
+
+	if(GunHolderLocation.Distance(HandLocation, GunHolderLocation) <= GunPickUpRange) {
+		return true;
+	}
+	return false;
 }
 
 void AWildWestShooterPlayer::SetIsDead(bool bDead) {

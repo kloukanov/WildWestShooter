@@ -63,6 +63,8 @@ public:
 	UFUNCTION(Blueprintcallable)
 	FVector2D GetLookAxisVector();
 
+	void SetLookAxisVector(FVector2D NewLookAxisVector) { LookAxisVector = NewLookAxisVector; }
+
 	UFUNCTION(Blueprintcallable)
 	FVector2D GetMoveAxisVector();
 
@@ -75,6 +77,8 @@ public:
 	void Shoot();
 	
 	void PickUpGun();
+
+	bool CanGetGun();
 
 protected:
 

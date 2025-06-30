@@ -1,9 +1,10 @@
 #include "BTTask_PickUpGun.h"
 #include "AIController.h"
 #include "../WildWestShooterPlayer.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 UBTTask_PickUpGun::UBTTask_PickUpGun() {
-    NodeName = TEXT("Shoot");
+    NodeName = TEXT("Pick Up Gun");
 }
 
 EBTNodeResult::Type UBTTask_PickUpGun::ExecuteTask(UBehaviorTreeComponent &OwnerComp, uint8 *NodeMemory) {
@@ -20,6 +21,11 @@ EBTNodeResult::Type UBTTask_PickUpGun::ExecuteTask(UBehaviorTreeComponent &Owner
     }
 
     ShooterAI->PickUpGun();
+
+    OwnerComp.GetBlackboardComponent()->SetValueAsVector(TEXT("TargetLocation"), FVector(0,0,0));
+    OwnerComp.GetBlackboardComponent()->SetValueAsBool(TEXT("CanGetGun"), false);
+    OwnerComp.GetBlackboardComponent()->SetValueAsBool(TEXT("HasGun"), true);
+    OwnerComp.GetBlackboardComponent()->SetValueAsFloat(TEXT("HandSpeed"), 5.0f);
 
     return EBTNodeResult::Succeeded;
 }
