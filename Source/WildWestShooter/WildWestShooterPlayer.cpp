@@ -48,7 +48,7 @@ void AWildWestShooterPlayer::Tick(float DeltaTime)
 
 	if(HitReactionTime <= 0){
 		HitReactionTime = 0;
-		GetMesh()->SetAllBodiesBelowSimulatePhysics(FName("pelvis"), false, true);
+		GetMesh()->SetAllBodiesBelowSimulatePhysics(FName("pelvis"), false, false);
 		SetActorTickEnabled(false);
 	}else {
 		GetMesh()->SetAllBodiesBelowPhysicsBlendWeight(FName("pelvis"), FMath::Min(HitReactionTime, 1), false, true);
@@ -74,14 +74,14 @@ void AWildWestShooterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerIn
 }
 
 void AWildWestShooterPlayer::MoveArm(const FInputActionValue& Value) {
-	// UE_LOG(LogTemp, Warning, TEXT("moveArm: %s"), *Value.ToString());
-	UE_LOG(LogTemp, Warning, TEXT("===== LOOK AXIS VECTOR: %s"), *LookAxisVector.ToString());
 	LookAxisVector += Value.Get<FVector2D>();
 }
 
 void AWildWestShooterPlayer::MoveBody(const FInputActionValue& Value) {
-	UE_LOG(LogTemp, Warning, TEXT("movebody: %s"), *Value.ToString());
 	MoveAxisVector += Value.Get<FVector2D>();
+	// clamped to values set inside of the animation blend
+	MoveAxisVector.X = FMath::Clamp(MoveAxisVector.X, -50.f, 50.f);
+	UE_LOG(LogTemp, Warning, TEXT("moveAxisVector: %s"), *MoveAxisVector.ToString());
 }
 
 FVector2D AWildWestShooterPlayer::GetLookAxisVector() {

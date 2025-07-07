@@ -33,6 +33,12 @@ void UBTService_UpdateHandPosition::TickNode(UBehaviorTreeComponent &OwnerComp, 
 
         FVector TargetLocation = OwnerComp.GetBlackboardComponent()->GetValueAsVector("TargetLocation");
         float HandSpeed = OwnerComp.GetBlackboardComponent()->GetValueAsFloat("HandSpeed");
+        if(HasGun && ShooterAI->GetLookAxisVector().Distance(ShooterAI->GetLookAxisVector(), FVector2D(TargetLocation.X, TargetLocation.Y)) <= 1.f){
+            float TargetX = FMath::RandRange(-3.0f, 3.0f);
+            float TargetY = FMath::RandRange(-3.0f, 3.0f);
+            TargetLocation = FVector(TargetX, TargetY, 0);
+            OwnerComp.GetBlackboardComponent()->SetValueAsVector("TargetLocation", TargetLocation);
+        }
         FVector2D NewLocation = FMath::Vector2DInterpTo(ShooterAI->GetLookAxisVector(), FVector2D(TargetLocation.X, TargetLocation.Y), DeltaSeconds, HandSpeed);
         ShooterAI->SetLookAxisVector(NewLocation);
     }
